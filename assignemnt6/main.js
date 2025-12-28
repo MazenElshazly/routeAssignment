@@ -277,7 +277,7 @@ app.post("/users/:username/:par1/:par2/:par3", (req, res, next) => {
     if (error) {
       return res.status(500).json({ message: "Database error", error: error });
     }
-    const permissionsQuery = `GRANT ${par1} , ${par2} , ${par3} ON musicana_db.sales* TO ${username}@'localhost';`;
+    const permissionsQuery = `GRANT ${par1} , ${par2} , ${par3} ON *.* TO ${username}@'localhost';`;
     db.execute(permissionsQuery, [par1, par2, par3], (error, data) => {
       if (error) {
         return res
@@ -302,7 +302,7 @@ app.put("/users/:username/:par1", (req, res, next) => {
 
 app.post("/users/:username/:par1", (req, res, next) => {
   const { username, par1 } = req.params;
-  const grantQuery = `GRANT ${par1} ON *.* TO ${username}@'localhost';`;
+  const grantQuery = `GRANT ${par1} ON musicana_db.sales TO ${username}@'localhost';`;
   db.execute(grantQuery, (error, data) => {
     if (error) {
       return res.status(500).json({ message: "Database error", error: error });
