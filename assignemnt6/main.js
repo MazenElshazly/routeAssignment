@@ -201,28 +201,17 @@ WHERE product_id = ?;`;
   });
 });
 
-app.get("/sales/:id", (req, res, next) => {
-  const { id } = req.params;
-  const sqlQuery = `SELECT * FROM products WHERE product_id = ? `;
-  db.execute(sqlQuery, [id], (error, data, fields) => {
+app.get("/sales", (req, res, next) => {
+  const maxQuery = `SELECT 
+    product_id,
+    SUM(quantity_sold) as total_quantity_sold
+FROM sales 
+GROUP BY product_id;`;
+  db.execute(maxQuery, (error, data) => {
     if (error) {
       return res.status(500).json({ message: "Database error", error: error });
     }
-    if (data?.length == 0) {
-      return res.status(404).json({ message: "no prduct found with such id " });
-    }
-
-    const maxQuery = `SELECT SUM(quantity_sold) 
-FROM sales 
-WHERE product_id = ?;`;
-    db.execute(maxQuery, [id], (error, data) => {
-      if (error) {
-        return res
-          .status(500)
-          .json({ message: "Database error", error: error });
-      }
-      return res.status(200).json({ data });
-    });
+    return res.status(200).json({ data });
   });
 });
 
